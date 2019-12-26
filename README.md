@@ -1,6 +1,6 @@
 
 ## 项目说明
-> 借鉴自https://github.com/inspurer/WorkAttendanceSystem，根据自己的需求进行改写。
+> 借鉴自https://github.com/inspurer/WorkAttendanceSystem 根据自己的需求进行改写。
 
  
 <p align="center">

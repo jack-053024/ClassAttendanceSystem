@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-# author:           inspurer(月小水长)
-# pc_type           lenovo
 # create_time:      2019/6/2 19:25
 # file_name:        lzq01.py
-# github            https://github.com/inspurer
-# 微信公众号         月小水长(ID: inspurer)
 
 import wx
 import wx.grid
@@ -49,15 +45,15 @@ def return_euclidean_distance(feature_1, feature_2):
 
 class WAS(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self,parent=None,title="员工考勤系统",size=(920,560))
+        wx.Frame.__init__(self, parent=None, title="课堂考勤系统", size=(920,560))
 
         self.initMenu()
         self.initInfoText()
         self.initGallery()
-        self.initDatabase()
-        self.initData()
+        self.init_database()
+        self.init_data()
 
-    def initData(self):
+    def init_data(self):
         self.name = ""
         self.id =ID_WORKER_UNAVIABLE
         self.face_feature = ""
@@ -291,7 +287,7 @@ class WAS(wx.Frame):
                 print("已删除已录入人脸的图片", dir+"/"+file)
             os.rmdir(PATH_FACE + self.name)
             print("已删除已录入人脸的姓名文件夹", dir)
-            self.initData()
+            self.init_data()
             return
         if self.pic_num>0:
             pics = os.listdir(PATH_FACE + self.name)
@@ -325,7 +321,7 @@ class WAS(wx.Frame):
         else:
             os.rmdir(PATH_FACE + self.name)
             print("已删除空文件夹",PATH_FACE + self.name)
-        self.initData()
+        self.init_data()
 
     def OnFinishRegisterClicked(self,event):
         self.OnFinishRegister()
@@ -461,7 +457,7 @@ class WAS(wx.Frame):
 
     #数据库部分
     #初始化数据库
-    def initDatabase(self):
+    def init_database(self):
         conn = sqlite3.connect("inspurer.db")  #建立数据库连接
         cur = conn.cursor()             #得到游标对象
         cur.execute('''create table if not exists worker_info
