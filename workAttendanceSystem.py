@@ -10,7 +10,10 @@ import os
 from skimage import io as iio
 import io
 import zlib
-import dlib  # 人脸识别的库dlib
+
+# 人脸识别的库 dlib
+import dlib
+
 import numpy as np  # 数据处理的库numpy
 import cv2  # 图像处理的库OpenCv
 import _thread
@@ -61,103 +64,6 @@ class WAS(wx.Frame):
         self.flag_registed = False
         self.puncard_time = "21:00:00"
         self.loadDataBase(1)
-
-    def initMenu(self):
-
-        menuBar = wx.MenuBar()  #生成菜单栏
-        menu_Font = wx.Font()#Font(faceName="consolas",pointsize=20)
-        menu_Font.SetPointSize(14)
-        menu_Font.SetWeight(wx.BOLD)
-
-
-        registerMenu = wx.Menu() #生成菜单
-        self.new_register = wx.MenuItem(registerMenu,ID_NEW_REGISTER,"新建录入")
-        self.new_register.SetBitmap(wx.Bitmap("drawable/new_register.png"))
-        self.new_register.SetTextColour("SLATE BLUE")
-        self.new_register.SetFont(menu_Font)
-        registerMenu.Append(self.new_register)
-
-        self.finish_register = wx.MenuItem(registerMenu,ID_FINISH_REGISTER,"完成录入")
-        self.finish_register.SetBitmap(wx.Bitmap("drawable/finish_register.png"))
-        self.finish_register.SetTextColour("SLATE BLUE")
-        self.finish_register.SetFont(menu_Font)
-        self.finish_register.Enable(False)
-        registerMenu.Append(self.finish_register)
-
-
-        puncardMenu = wx.Menu()
-        self.start_punchcard = wx.MenuItem(puncardMenu,ID_START_PUNCHCARD,"开始签到")
-        self.start_punchcard.SetBitmap(wx.Bitmap("drawable/start_punchcard.png"))
-        self.start_punchcard.SetTextColour("SLATE BLUE")
-        self.start_punchcard.SetFont(menu_Font)
-        puncardMenu.Append(self.start_punchcard)
-
-        self.end_puncard = wx.MenuItem(puncardMenu,ID_END_PUNCARD,"结束签到")
-        self.end_puncard.SetBitmap(wx.Bitmap("drawable/end_puncard.png"))
-        self.end_puncard.SetTextColour("SLATE BLUE")
-        self.end_puncard.SetFont(menu_Font)
-        self.end_puncard.Enable(False)
-        puncardMenu.Append(self.end_puncard)
-
-        logcatMenu = wx.Menu()
-        self.open_logcat = wx.MenuItem(logcatMenu,ID_OPEN_LOGCAT,"打开日志")
-        self.open_logcat.SetBitmap(wx.Bitmap("drawable/open_logcat.png"))
-        self.open_logcat.SetFont(menu_Font)
-        self.open_logcat.SetTextColour("SLATE BLUE")
-        logcatMenu.Append(self.open_logcat)
-
-        self.close_logcat = wx.MenuItem(logcatMenu, ID_CLOSE_LOGCAT, "关闭日志")
-        self.close_logcat.SetBitmap(wx.Bitmap("drawable/close_logcat.png"))
-        self.close_logcat.SetFont(menu_Font)
-        self.close_logcat.SetTextColour("SLATE BLUE")
-        logcatMenu.Append(self.close_logcat)
-
-        menuBar.Append(registerMenu,"&人脸录入")
-        menuBar.Append(puncardMenu,"&刷脸签到")
-        menuBar.Append(logcatMenu,"&考勤日志")
-        self.SetMenuBar(menuBar)
-
-        self.Bind(wx.EVT_MENU,self.OnNewRegisterClicked,id=ID_NEW_REGISTER)
-        self.Bind(wx.EVT_MENU,self.OnFinishRegisterClicked,id=ID_FINISH_REGISTER)
-        self.Bind(wx.EVT_MENU,self.OnStartPunchCardClicked,id=ID_START_PUNCHCARD)
-        self.Bind(wx.EVT_MENU,self.OnEndPunchCardClicked,id=ID_END_PUNCARD)
-        self.Bind(wx.EVT_MENU,self.OnOpenLogcatClicked,id=ID_OPEN_LOGCAT)
-        self.Bind(wx.EVT_MENU,self.OnCloseLogcatClicked,id=ID_CLOSE_LOGCAT)
-
-    def OnOpenLogcatClicked(self,event):
-        self.loadDataBase(2)
-        #必须要变宽才能显示 scroll
-        self.SetSize(980,560)
-        grid = wx.grid.Grid(self,pos=(320,0),size=(640,500))
-        grid.CreateGrid(100, 4)
-        for i in range(100):
-            for j in range(4):
-                grid.SetCellAlignment(i,j,wx.ALIGN_CENTER,wx.ALIGN_CENTER)
-        grid.SetColLabelValue(0, "工号") #第一列标签
-        grid.SetColLabelValue(1, "姓名")
-        grid.SetColLabelValue(2, "打卡时间")
-        grid.SetColLabelValue(3, "是否迟到")
-
-        grid.SetColSize(0,120)
-        grid.SetColSize(1,120)
-        grid.SetColSize(2,150)
-        grid.SetColSize(3,150)
-
-
-        grid.SetCellTextColour("NAVY")
-        for i,id in enumerate(self.logcat_id):
-            grid.SetCellValue(i,0,str(id))
-            grid.SetCellValue(i,1,self.logcat_name[i])
-            grid.SetCellValue(i,2,self.logcat_datetime[i])
-            grid.SetCellValue(i,3,self.logcat_late[i])
-
-        pass
-
-    def OnCloseLogcatClicked(self,event):
-        self.SetSize(920,560)
-
-        self.initGallery()
-        pass
 
     def register_cap(self,event):
         # 创建 cv2 摄像头对象
@@ -404,47 +310,6 @@ class WAS(wx.Frame):
                     self.bmp.SetBitmap(wx.Bitmap(self.pic_index))
                     _thread.exit()
 
-    def OnStartPunchCardClicked(self,event):
-        # cur_hour = datetime.datetime.now().hour
-        # print(cur_hour)
-        # if cur_hour>=8 or cur_hour<6:
-        #     wx.MessageBox(message='''您错过了今天的签到时间，请明天再来\n
-        #     每天的签到时间是:6:00~7:59''', caption="警告")
-        #     return
-        self.start_punchcard.Enable(False)
-        self.end_puncard.Enable(True)
-        self.loadDataBase(2)
-        threading.Thread(target=self.punchcard_cap,args=(event,)).start()
-        #_thread.start_new_thread(self.punchcard_cap,(event,))
-        pass
-
-    def OnEndPunchCardClicked(self,event):
-        self.start_punchcard.Enable(True)
-        self.end_puncard.Enable(False)
-        pass
-
-    def initInfoText(self):
-        #少了这两句infoText背景颜色设置失败，莫名奇怪
-        resultText = wx.StaticText(parent=self, pos = (10,20),size=(90, 60))
-        resultText.SetBackgroundColour('red')
-
-        self.info = "\r\n"+self.getDateAndTime()+"程序初始化成功\r\n"
-        #第二个参数水平混动条
-        self.infoText = wx.TextCtrl(parent=self,size=(320,500),
-                   style=(wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY))
-        #前景色，也就是字体颜色
-        self.infoText.SetForegroundColour("ORANGE")
-        self.infoText.SetLabel(self.info)
-        #API:https://www.cnblogs.com/wangjian8888/p/6028777.html
-        # 没有这样的重载函数造成"par is not a key word",只好Set
-        font = wx.Font()
-        font.SetPointSize(12)
-        font.SetWeight(wx.BOLD)
-        font.SetUnderlined(True)
-
-        self.infoText.SetFont(font)
-        self.infoText.SetBackgroundColour('TURQUOISE')
-        pass
 
     def initGallery(self):
         self.pic_index = wx.Image("drawable/index.png", wx.BITMAP_TYPE_ANY).Scale(600, 500)
@@ -546,4 +411,3 @@ class WAS(wx.Frame):
 app = wx.App()
 frame = WAS()
 frame.Show()
-app.MainLoop()
